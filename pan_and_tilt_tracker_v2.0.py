@@ -1,4 +1,5 @@
 # pan_and_tilt_tracker_v2.0.py
+# 11-03-2016 this does not work yet. There are copy paste errors. Need to use actual GIT commands to push the correct version to this repository
 
 # to run this program, type:
 # sudo python pan_and_tilt_tracker.py headed          (GUI)
