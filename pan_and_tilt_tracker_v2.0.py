@@ -29,8 +29,8 @@ def main():
         print ("entering headless mode")
     else:
         print ("\nprogram usage:\n")
-        print ("for headed mode (GUI interface) @command prompt type: sudo pyth$
-        print ("for headless mode (no GUI interface, i.e. embedded mode) @ comm$
+        print ("for headed mode (GUI interface) @command prompt type: sudo pyth$)
+        print ("for headless mode (no GUI interface, i.e. embedded mode) @ comm$)
         return
     # end if else
 
