@@ -1,9 +1,8 @@
 # pan_and_tilt_tracker_v2.0.py
-# 11-03-2016 this does not work yet. There are copy paste errors. Need to use actual GIT commands to push the correct version to this repository
 
 # to run this program, type:
 # sudo python pan_and_tilt_tracker.py headed          (GUI)
-# sudo python pan_and_tilt_tracker.py headless        (no GUI (for embedded use$
+# sudo python pan_and_tilt_tracker.py headless        (no GUI (for embedded use))
 
 # this program pans/tilts two servos so a mounted webcam tracks a red ball
 
@@ -18,7 +17,7 @@ import os
 import sys
 from operator import itemgetter
 
-###############################################################################$
+###################################################################################################
 def main():
     headed_or_headless = ""
 
@@ -30,12 +29,12 @@ def main():
         print ("entering headless mode")
     else:
         print ("\nprogram usage:\n")
-        print ("for headed mode (GUI interface) @command prompt type: sudo pyth$)
-        print ("for headless mode (no GUI interface, i.e. embedded mode) @ comm$)
+        print ("for headed mode (GUI interface) @command prompt type: sudo python pan_and_tilt_tracker.py headed\n")
+        print ("for headless mode (no GUI interface, i.e. embedded mode) @ command prompt type: sudo python pan_and_tilt_tracker.py headless\n")
         return
     # end if else
 
-    GPIO.setmode(GPIO.BCM)              # use GPIO pin numbering, not physical $
+    GPIO.setmode(GPIO.BCM)              # use GPIO pin numbering, not physical pin numbering
 
     led_gpio_pin = 18
     pan_gpio_pin = 24
@@ -54,19 +53,19 @@ def main():
     pwmPanObject.start(pwmInitialDutyCycle)
     pwmTiltObject.start(pwmInitialDutyCycle)
 
-    capWebcam = cv2.VideoCapture(0)                     # declare a VideoCaptur$
+    capWebcam = cv2.VideoCapture(0)                     # declare a VideoCapture object and associate to webcam, 0 => use 1st webcam
 
-    print (("default resolution = ") + str(capWebcam.get(cv2.CAP_PROP_FRAME_WID$
+    print (("default resolution = ") + str(capWebcam.get(cv2.CAP_PROP_FRAME_WIDTH)) + ("x") + str(capWebcam.get(cv2.CAP_PROP_FRAME_HEIGHT)))
 
     capWebcam.set(cv2.CAP_PROP_FRAME_WIDTH, 320.0)
     capWebcam.set(cv2.CAP_PROP_FRAME_HEIGHT, 240.0)
 
-    print (("updated resolution = ") + str(capWebcam.get(cv2.CAP_PROP_FRAME_WID$
+    print (("updated resolution = ") + str(capWebcam.get(cv2.CAP_PROP_FRAME_WIDTH)) + ("x") + str(capWebcam.get(cv2.CAP_PROP_FRAME_HEIGHT)))
 
-    if capWebcam.isOpened() == False:                           # check if Vide$
-        print ("error: capWebcam not accessed successfully\n\n")          # if $
-        os.system("pause")                                              # pause$
-        return                                                          # and e$
+    if capWebcam.isOpened() == False:                           # check if VideoCapture object was associated to webcam successfully
+        print ("error: capWebcam not accessed successfully\n\n")          # if not, print error message to std out
+        os.system("pause")                                              # pause until user presses a key so user can see error message
+        return                                                          # and exit function (which exits program)
     # end if
 
     intXFrameCenter = int(float(capWebcam.get(cv2.CAP_PROP_FRAME_WIDTH)) / 2.0)
@@ -75,21 +74,21 @@ def main():
     panServoPosition = int(90)           # pan servo position in degrees
     tiltServoPosition = int(90)          # tilt servo position in degrees
 
-    updateServoMotorPositions(pwmPanObject, panServoPosition, pwmTiltObject, ti$
+    updateServoMotorPositions(pwmPanObject, panServoPosition, pwmTiltObject, tiltServoPosition)
 
-    while cv2.waitKey(1) != 27 and capWebcam.isOpened():                # until$
-        blnFrameReadSuccessfully, imgOriginal = capWebcam.read()            # r$
+    while cv2.waitKey(1) != 27 and capWebcam.isOpened():                # until the Esc key is pressed or webcam connection is lost
+        blnFrameReadSuccessfully, imgOriginal = capWebcam.read()            # read next frame
 
-        if not blnFrameReadSuccessfully or imgOriginal is None:             # i$
-            print ("error: frame not read from webcam\n")                     #$
-            os.system("pause")                                              # p$
-            break                                                           # e$
+        if not blnFrameReadSuccessfully or imgOriginal is None:             # if frame was not read successfully
+            print ("error: frame not read from webcam\n")                     # print error message to std out
+            os.system("pause")                                              # pause until user presses a key so user can see error message
+            break                                                           # exit while loop (which exits program)
         # end if
 
         imgHSV = cv2.cvtColor(imgOriginal, cv2.COLOR_BGR2HSV)
 
-        imgThreshLow = cv2.inRange(imgHSV, np.array([0, 135, 135]), np.array([1$
-        imgThreshHigh = cv2.inRange(imgHSV, np.array([168, 135, 135]), np.array$
+        imgThreshLow = cv2.inRange(imgHSV, np.array([0, 135, 135]), np.array([19, 255, 255]))
+        imgThreshHigh = cv2.inRange(imgHSV, np.array([168, 135, 135]), np.array([179, 255, 255]))
 
         imgThresh = cv2.add(imgThreshLow, imgThreshHigh)
 
@@ -99,11 +98,12 @@ def main():
         imgThresh = cv2.erode(imgThresh, np.ones((5,5),np.uint8))
 
         intRows, intColumns = imgThresh.shape
-	circles = cv2.HoughCircles(imgThresh, cv2.HOUGH_GRADIENT, 3, intRows / 4)      # fill variable circles with all circles in the pro$
+
+        circles = cv2.HoughCircles(imgThresh, cv2.HOUGH_GRADIENT, 3, intRows / 4)      # fill variable circles with all circles in the processed image
 
         GPIO.output(led_gpio_pin, GPIO.LOW)
 
-        if circles is not None:                     # this line is necessary to keep program from crashing on next line if no circles were$
+        if circles is not None:                     # this line is necessary to keep program from crashing on next line if no circles were found
             GPIO.output(led_gpio_pin, GPIO.HIGH)
 
             sortedCircles = sorted(circles[0], key = itemgetter(2), reverse = True)
@@ -111,7 +111,7 @@ def main():
             largestCircle = sortedCircles[0]
 
             x, y, radius = largestCircle                                                                       # break out x, y, and radius
-            print (("ball position x = ") + str(x) + (", y = ") + str(y) + (", radius = ") + str(radius))       # print ball position and $
+            print (("ball position x = ") + str(x) + (", y = ") + str(y) + (", radius = ") + str(radius))       # print ball position and radius
 
             if x < intXFrameCenter and panServoPosition >= 2:
                 panServoPosition = panServoPosition - 2
@@ -141,7 +141,7 @@ def main():
     # end while
 
     cv2.destroyAllWindows()                     # remove windows from memory
-    GPIO.cleanup()                              # resets GPIO for next run to avoid errors
+    GPIO.cleanup()				# resets GPIO for next run to avoid errors
     return
 # end main
 
@@ -149,6 +149,7 @@ def main():
 def updateServoMotorPositions(pwmPanObject, panServoPosition, pwmTiltObject, tiltServoPosition):
     panDutyCycle = ((float(panServoPosition) * 0.01) + 0.5) * 10
     tiltDutyCycle = ((float(tiltServoPosition) * 0.01) + 0.5) * 10
+
     pwmPanObject.ChangeDutyCycle(panDutyCycle)
     pwmTiltObject.ChangeDutyCycle(tiltDutyCycle)
 # end function
@@ -156,4 +157,6 @@ def updateServoMotorPositions(pwmPanObject, panServoPosition, pwmTiltObject, til
 ###################################################################################################
 if __name__ == "__main__":
     main()
+
+
 
