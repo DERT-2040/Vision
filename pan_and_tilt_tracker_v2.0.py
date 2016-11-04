@@ -1,4 +1,6 @@
 # pan_and_tilt_tracker_v2.0.py
+# if using Putty and X ming type this on the command line first    xauth extract - $DISPLAY | sudo xauth merge -
+# then enter "sudo python pan_and_tilt............
 
 # to run this program, type:
 # sudo python pan_and_tilt_tracker.py headed          (GUI)
@@ -7,8 +9,6 @@
 # this program pans/tilts two servos so a mounted webcam tracks a red ball
 
 # use the circuit from "pan_and_tilt_tracker.png"
-# run this at the command prompt to get the X11 permissions working for sudo
-#xauth extract - $DISPLAY | sudo xauth merge -
 
 import RPi.GPIO as GPIO
 import cv2
