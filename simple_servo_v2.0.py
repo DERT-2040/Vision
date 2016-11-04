@@ -1,5 +1,5 @@
 # simple_servo_v2.0.py
-
+##################
 # use the circuit from "simple_servo.png"
 
 import RPi.GPIO as GPIO
