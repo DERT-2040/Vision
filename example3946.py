@@ -47,7 +47,7 @@ def getDistFromCenter():
             #i = 0          
             #print 'string' , contours
             for i,cnt in enumerate(contours):
-                    print 'inside'
+                    print ('inside')
                     if (1000 < cv2.contourArea(cnt) < 10000):
                             rect = cv2.convexHull(cnt)
                             minRect = cv2.minAreaRect(rect)
@@ -61,11 +61,11 @@ def getDistFromCenter():
                             degree = minRect[2]
                             if showPrint:
 
-                                    print 'x1:', x1
-                                    print 'y1:', y1
-                                    print 'width:', width
-                                    print 'height:', height
-                                    print 'degree:', degree
+                                    print (('x1:'), x1)
+                                    print (('y1:'), y1)
+                                    print (('width:'), width)
+                                    print (('height:'), height)
+                                    print (('degree:'), degree)
                             
                             if showPrint:
                                     pass
@@ -76,12 +76,12 @@ def getDistFromCenter():
                             else:
                                     ratio = 0
 
-                            if showPrint: print 'ratio', ratio
+                            if showPrint: print (('ratio'), ratio)
 
                             if (1.8 < ratio < 2.1) or (.4 < ratio < .8) : 
                                     #print 'got it'
 
-                                    if showPrint: print 'winning ratio:', ratio
+                                    if showPrint: print (('winning ratio:'), ratio)
 
                                     if (area < cv2.contourArea(cnt)):
                                             idx = i
@@ -95,7 +95,7 @@ def getDistFromCenter():
                     
                     rect = cv2.convexHull(contours[idx])
 
-                    if showPrint: 'rect:', rect
+                    if showPrint: (('rect:'), rect)
                     minRect = cv2.minAreaRect(rect)
                     
                     area = cv2.contourArea(contours[idx])
@@ -108,7 +108,7 @@ def getDistFromCenter():
                     height = minRect[1][1]
                     degree = minRect[2]
 
-                    if showPrint: print 'DEGREE:', degree
+                    if showPrint: print (('DEGREE:'), degree)
 
                     if width < height:
                             width, height = height, width
@@ -122,7 +122,7 @@ def getDistFromCenter():
                     dist_to_wall = int(new_dist_to_wall*1000)
 
                     if showPrint:
-                            print 'CALCULATED DIST', new_dist_to_wall
+                            print (('CALCULATED DIST'), new_dist_to_wall)
                     ratio = height/width
 
                     if showPrint: 
@@ -176,7 +176,7 @@ if __name__ == '__main__':
             #cv2.waitKey(1)
             finalframe = process_image(camera_capture)
             
-            print 'imshow'
+            print ('imshow')
             cv2.imshow('pic', finalframe)
             cv2.waitKey(1)
             
@@ -184,13 +184,13 @@ if __name__ == '__main__':
     while True:
             try:
                     conn, cli_addr = sock.accept()
-                    print 'connection from: ', cli_addr
+                    print (('connection from: '), cli_addr)
 
                     try:
                             while True:
                                     try:
                                             recvd = conn.recv(4096)
-                                            print recvd
+                                            print (recvd)
 
                                             if ('G' in recvd):
                                                         #if the pictures are not coming out as desired, ramp_frames
@@ -211,22 +211,22 @@ if __name__ == '__main__':
                                                         #cv2.waitKey(1)
                                                         result, img = getDistFromCenter()
                                                         result = conn.send(str(result))
-                                                        print 'result', result
+                                                        print (('result'), result)
                                                         
                                                                                                         
                                             else:
-                                                    print 'not G'
+                                                    print ('not G')
                                                    # break
                                     except:
-                                            print ' exception:', sys.exc_info()[0]
+                                            print ((' exception:'), sys.exc_info()[0])
                                             conn.close()
-                                            print 'conn closed'
+                                            print ('conn closed')
                                             break
                     finally:
-                           print 'connection closed'
+                           print ('connection closed')
                            conn.close()
 
             except KeyboardInterrupt:
-                        print 'LOSING'
+                        print ('LOSING')
                         if conn: conn.close()
                         break        
