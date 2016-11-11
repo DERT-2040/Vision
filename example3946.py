@@ -1,6 +1,6 @@
 #example3946.py
 #from FRC 3946 for training
-====================================================
+#====================================================
 import numpy as np
 import cv2
 import socket
