@@ -14,7 +14,7 @@ def get_image(): #can be initialized in the function itself, it is fine here.
 def process_image(img):
             hsv_image = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
             #hsv_image = cv2.cvtColor(grey_image, cv2.COLOR_GRAY2HSV)
-            print 'process image'
+            print ('process image')
             upperhsv = [80, 80, 255]
             lowerhsv = [1, 1, 235]
             #filter only white frame and return value
