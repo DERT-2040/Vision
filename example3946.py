@@ -158,7 +158,7 @@ if __name__ == '__main__':
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     serv_addr = ('127.0.0.1', 10000)
-    print 'starting server on: ', serv_addr[0], ':', serv_addr[1]
+    print (('starting server on: '), serv_addr[0], (':'), serv_addr[1])
     sock.bind(serv_addr)
     sock.listen(1)
     conn = None
