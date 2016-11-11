@@ -113,10 +113,10 @@ def getDistFromCenter():
                     if width < height:
                             width, height = height, width
 
-                    if showPrint: print width
+                    if showPrint: print (width)
                     dist_FOV = 1.33*GlobalWidth/width
 
-                    if showPrint: print dist_FOV
+                    if showPrint: print (dist_FOV)
                     dist_to_wall = (dist_FOV/2) / 0.41237445509
                     new_dist_to_wall = dist_to_wall * (0.178195*np.log(dist_to_wall) + 0.6357449)
                     dist_to_wall = int(new_dist_to_wall*1000)
