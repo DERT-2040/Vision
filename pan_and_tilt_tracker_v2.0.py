@@ -9,7 +9,7 @@
 # this program pans/tilts two servos so a mounted webcam tracks a red ball
 
 # use the circuit from "pan_and_tilt_tracker.png"
-
+import time
 import RPi.GPIO as GPIO
 import cv2
 import numpy as np
@@ -112,21 +112,28 @@ def main():
 
             x, y, radius = largestCircle                                                                       # break out x, y, and radius
             print (("ball position x = ") + str(x) + (", y = ") + str(y) + (", radius = ") + str(radius))       # print ball position and radius
+            Err_X = x - intXFrameCenter     # right side of screen in zero. Positive error  means move camera to the right-a smaller angle
+            Err_Y = intYFrameCenter - y     # top of the screen is zero Y. if Err_Y is positive, camera needs to rotate to a smaller angle
+            Deadband_X = 15            # deadband prevents servo from dithering back and forth near zero
+            Deadband_Y = 30
+            print (("Pan error from center= ") + str(Err_X))
+            print (("Tilt  error from center= ") + str(Err_Y))
 
-            if x < intXFrameCenter and panServoPosition >= 2:
-                panServoPosition = panServoPosition - 2
-            elif x > intXFrameCenter and panServoPosition <= 178:
-                panServoPosition = panServoPosition + 2
+            if Err_X > Deadband_X and panServoPosition >= 2: 
+                panServoPosition = panServoPosition - 1          # 90 degress points camera at 12 o'clock (straight ahead) 0 deg is 3 o'clock
+            elif Err_X < -Deadband_X and panServoPosition >= 178:
+                panServoPosition = panServoPosition + 1
+            
             # end if else
 
-            if y < intYFrameCenter and tiltServoPosition >= 62:
-                tiltServoPosition = tiltServoPosition - 2
-            elif y > intYFrameCenter and tiltServoPosition <= 133:
-                tiltServoPosition = tiltServoPosition + 2
+            if Err_Y < Deadband_Y and tiltServoPosition <= 133:                     # 90 degress is level. smaller angles poin the camera up.
+                tiltServoPosition = tiltServoPosition + 1
+            elif Err_Y > Deadband_Y and tiltServoPosition >= 62:
+                tiltServoPosition = tiltServoPosition - 1
             # end if else
 
             updateServoMotorPositions(pwmPanObject, panServoPosition, pwmTiltObject, tiltServoPosition)
-
+            time.sleep(.3)                                       # lets the servo catch up but it delys the whole program
             if headed_or_headless == "headed":
                 cv2.circle(imgOriginal, (x, y), 3, (0, 255, 0), -1)           # draw small green circle at center of detected object
                 cv2.circle(imgOriginal, (x, y), radius, (0, 0, 255), 3)                     # draw red circle around the detected object
@@ -136,7 +143,7 @@ def main():
 
         if headed_or_headless == "headed":
             cv2.imshow("imgOriginal", imgOriginal)                 # show windows
-            cv2.imshow("imgThresh", imgThresh)
+            cv2.imshow("imgThresh", imgThresh)                    # comment out to save bandwidth in headed mode
         # end if
     # end while
 
