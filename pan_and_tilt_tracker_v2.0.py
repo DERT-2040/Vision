@@ -120,9 +120,9 @@ def main():
             print (("Tilt  error from center= ") + str(Err_Y))
 
             if Err_X > Deadband_X and panServoPosition >= 2: 
-                panServoPosition = panServoPosition - 1          # 90 degress points camera at 12 o'clock (straight ahead) 0 deg is 3 o'clock
+                panServoPosition = panServoPosition - 2          # 90 degress points camera at 12 o'clock (straight ahead) 0 deg is 3 o'clock
             elif Err_X < -Deadband_X and panServoPosition <= 178:
-                panServoPosition = panServoPosition + 1
+                panServoPosition = panServoPosition + 2
             
             # end if else
 
