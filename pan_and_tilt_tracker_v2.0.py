@@ -121,7 +121,7 @@ def main():
 
             if Err_X > Deadband_X and panServoPosition >= 2: 
                 panServoPosition = panServoPosition - 1          # 90 degress points camera at 12 o'clock (straight ahead) 0 deg is 3 o'clock
-            elif Err_X < -Deadband_X and panServoPosition >= 178:
+            elif Err_X < -Deadband_X and panServoPosition <= 178:
                 panServoPosition = panServoPosition + 1
             
             # end if else
@@ -133,7 +133,7 @@ def main():
             # end if else
 
             updateServoMotorPositions(pwmPanObject, panServoPosition, pwmTiltObject, tiltServoPosition)
-            time.sleep(.3)                                       # lets the servo catch up but it delys the whole program
+            time.sleep(.1)                                       # lets the servo catch up but it delys the whole program
             if headed_or_headless == "headed":
                 cv2.circle(imgOriginal, (x, y), 3, (0, 255, 0), -1)           # draw small green circle at center of detected object
                 cv2.circle(imgOriginal, (x, y), radius, (0, 0, 255), 3)                     # draw red circle around the detected object
