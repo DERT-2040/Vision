@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 #from matplotlib import pyplot as plt
 status = "No Targets"
-imgOriginal = cv2.imread('2016_test_image_533.jpg') 
+imgOriginal = cv2.imread('image.jpg') 
 #gray = cv2.cvtColor(imgOriginal, cv2.COLOR_BGR2GRAY)
 #cv2.imshow('gray', gray)
 #ret, graythresh = cv2.threshold(gray,85,255,cv2.THRESH_BINARY)
@@ -44,11 +44,11 @@ for c in cnts:
 		keepDims = w > 5 and h > 5
 		keepSolidity = solidity > 0.01
 		keepAspectRatio = aspectRatio >= 1  and aspectRatio <= 5
-                print("x = "), (x) , ("y =") , (y), "w =",(w), ("h ="),(h)
-                print("area"), (area)
-                print("hullArea"), (hullArea)
-                print("solidity"), (solidity)
-                print("aspectRation"), (aspectRatio) 
+		print("x = "), (x), ("y ="), (y), ("w ="),(w), ("h ="),(h)
+		print(("area"), (area))
+		print("hullArea"), (hullArea)
+		print("solidity"), (solidity)
+		print("aspectRation"), (aspectRatio) 
 		# ensure that the contour passes all our tests
 		if keepDims and keepSolidity and keepAspectRatio:
 			# draw an outline around the target and update the status
