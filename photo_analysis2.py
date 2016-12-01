@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 #from matplotlib import pyplot as plt
 status = "No Targets"
-imgOriginal = cv2.imread('image.jpg') 
+imgOriginal = cv2.imread('2016_test_image_230.jpg') 
 #gray = cv2.cvtColor(imgOriginal, cv2.COLOR_BGR2GRAY)
 #cv2.imshow('gray', gray)
 #ret, graythresh = cv2.threshold(gray,85,255,cv2.THRESH_BINARY)
