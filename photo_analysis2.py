@@ -2,6 +2,8 @@ import cv2
 import numpy as np
 #from matplotlib import pyplot as plt
 status = "No Targets"
+#change the name of the image fike as needed. File needs to be in the same directory as the script
+#a few lines of code will make this into a video capture.
 imgOriginal = cv2.imread('2016_test_image_230.jpg') 
 #gray = cv2.cvtColor(imgOriginal, cv2.COLOR_BGR2GRAY)
 #cv2.imshow('gray', gray)
@@ -44,11 +46,7 @@ for c in cnts:
 		keepDims = w > 5 and h > 5
 		keepSolidity = solidity > 0.01
 		keepAspectRatio = aspectRatio >= 1  and aspectRatio <= 5
-		print("x = "), (x), ("y ="), (y), ("w ="),(w), ("h ="),(h)
-		print(("area"), (area))
-		print("hullArea"), (hullArea)
-		print("solidity"), (solidity)
-		print("aspectRation"), (aspectRatio) 
+		
 		# ensure that the contour passes all our tests
 		if keepDims and keepSolidity and keepAspectRatio:
 			# draw an outline around the target and update the status
@@ -66,9 +64,10 @@ for c in cnts:
 			cv2.line(imgOriginal, (cX, startY), (cX, endY), (0, 0, 255), 3)
 # draw the status text on the frame
 cv2.putText(imgOriginal, status, (20, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5,(0, 0, 255), 2)
-
-
-
+cv2.putText(imgOriginal, ("Ctr X = " + str(cX)), (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.5,(0, 0, 255), 1)
+cv2.putText(imgOriginal, ("Ctr Y = " + str(cY)), (20, 70), cv2.FONT_HERSHEY_SIMPLEX, 0.5,(0, 0, 255), 1)
+cv2.putText(imgOriginal, ("Width = " + str(w)), (20, 90), cv2.FONT_HERSHEY_SIMPLEX, 0.5,(255, 0, 0), 1)
+cv2.putText(imgOriginal, ("Height = " + str(h)), (20, 110), cv2.FONT_HERSHEY_SIMPLEX, 0.5,(255, 0, 0), 1)
 #ret,thresh = cv2.threshold(gray,127,255,0)
 #im2, contours, hierarchy = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
 
@@ -78,7 +77,7 @@ cv2.putText(imgOriginal, status, (20, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5,(0, 0, 
 #cv2.imshow('img2', im2)
 
 cv2.imshow('imgOriginal',imgOriginal)
-cv2.imshow('imgThresh', imgThresh)
+#cv2.imshow('imgThresh', imgThresh)
 #cv2.imshow('imgDilate', imgDilate)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
