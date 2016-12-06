@@ -11,6 +11,7 @@ imgOriginal = cv2.imread('2016_test_image_230.jpg')
 #cv2.imshow('graythresh',graythresh)
 imgHSV = cv2.cvtColor(imgOriginal, cv2.COLOR_BGR2HSV)
 
+
 imgThresh = cv2.inRange(imgHSV, np.array([70, 80, 100]), np.array([95, 255, 255]))
 imgThresh2 = imgThresh
 cv2.imshow('imgThresh2', imgThresh2)
