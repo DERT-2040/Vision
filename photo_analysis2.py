@@ -4,15 +4,15 @@ import numpy as np
 status = "No Targets"
 #change the name of the image fike as needed. File needs to be in the same directory as the script
 #a few lines of code will make this into a video capture.
-imgOriginal = cv2.imread('2016_test_image_230.jpg') 
+imgOriginal = cv2.imread('20in_dkgn_U.jpg') 
 #gray = cv2.cvtColor(imgOriginal, cv2.COLOR_BGR2GRAY)
 #cv2.imshow('gray', gray)
 #ret, graythresh = cv2.threshold(gray,85,255,cv2.THRESH_BINARY)
 #cv2.imshow('graythresh',graythresh)
 imgHSV = cv2.cvtColor(imgOriginal, cv2.COLOR_BGR2HSV)
 
-
-imgThresh = cv2.inRange(imgHSV, np.array([70, 80, 100]), np.array([95, 255, 255]))
+#imgThresh = cv2.inRange(imgHSV, np.array([70, 80, 100]), np.array([95, 255, 255]))
+imgThresh = cv2.inRange(imgHSV, np.array([35,65,45]), np.array([70, 255, 200]))  # for the dark gren  target
 imgThresh2 = imgThresh
 cv2.imshow('imgThresh2', imgThresh2)
 #imgBlur = cv2.GaussianBlur(imgThresh, (3, 3), 2)
@@ -41,11 +41,12 @@ for c in cnts:
 		area = cv2.contourArea(c)
 		hullArea = cv2.contourArea(cv2.convexHull(c))
 		solidity = area / float(hullArea)
- 
+		 
 		# compute whether or not the width and height, solidity, and
 		# aspect ratio of the contour falls within appropriate bounds
-		keepDims = w > 5 and h > 5
-		keepSolidity = solidity > 0.01
+		keepDims = w > 25 and h >25
+		#the U shaped targets are not very "solid" so a small number helps prevet false positives
+		keepSolidity = solidity > 0.1 and solidity < 0.3
 		keepAspectRatio = aspectRatio >= 1  and aspectRatio <= 5
 		
 		# ensure that the contour passes all our tests
@@ -63,12 +64,25 @@ for c in cnts:
 			(startY, endY) = (int(cY - (h * 0.15)), int(cY + (h * 0.15)))
 			cv2.line(imgOriginal, (startX, cY), (endX, cY), (0, 0, 255), 3)
 			cv2.line(imgOriginal, (cX, startY), (cX, endY), (0, 0, 255), 3)
+
+			#bounding rectangle test
+			rect = cv2.minAreaRect(c)
+			box = cv2.boxPoints(rect)
+			box = np.int0(box)
+			cv2.drawContours(imgOriginal,[box],0,(255,0,0),2)
+
+			ax,ay,aw,ah = cv2.boundingRect(c)
+			cv2.rectangle(imgOriginal,(ax,ay),(ax+aw,ay+ah),(0,255,0),2)
+			target_actual_width = 6.77
+			calc_tgt_dist = target_actual_width * 643 / aw
 # draw the status text on the frame
 cv2.putText(imgOriginal, status, (20, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5,(0, 0, 255), 2)
 cv2.putText(imgOriginal, ("Ctr X = " + str(cX)), (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.5,(0, 0, 255), 1)
 cv2.putText(imgOriginal, ("Ctr Y = " + str(cY)), (20, 70), cv2.FONT_HERSHEY_SIMPLEX, 0.5,(0, 0, 255), 1)
-cv2.putText(imgOriginal, ("Width = " + str(w)), (20, 90), cv2.FONT_HERSHEY_SIMPLEX, 0.5,(255, 0, 0), 1)
-cv2.putText(imgOriginal, ("Height = " + str(h)), (20, 110), cv2.FONT_HERSHEY_SIMPLEX, 0.5,(255, 0, 0), 1)
+cv2.putText(imgOriginal, ("Width = " + str(aw)), (20, 90), cv2.FONT_HERSHEY_SIMPLEX, 0.5,(0, 255, 0), 1)
+cv2.putText(imgOriginal, ("Height = " + str(ah)), (20, 110), cv2.FONT_HERSHEY_SIMPLEX, 0.5,(0, 255, 0), 1)
+cv2.putText(imgOriginal, ("Distance to Target  = " + str(calc_tgt_dist)), (20, 430), cv2.FONT_HERSHEY_SIMPLEX, 0.8,(255, 0, 0), 2)
+
 #ret,thresh = cv2.threshold(gray,127,255,0)
 #im2, contours, hierarchy = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
 
