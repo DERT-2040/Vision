@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 #from matplotlib import pyplot as plt
+#this is set to work with the "green U" printed targets. The image size and solidity need to be changed to work with the 2105 FRC images
 status = "No Targets"
 #change the name of the image fike as needed. File needs to be in the same directory as the script
 #a few lines of code will make this into a video capture.
