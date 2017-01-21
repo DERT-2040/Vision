@@ -26,6 +26,11 @@ cv2.imshow('imgThresh2', imgThresh2)
 # find contours in the edge map
 (im2, cnts, hierarchy) = cv2.findContours(imgThresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 #cv2.imshow('edged', edged)	
+
+#save center values
+listCenterX = [];
+listCenterY = [];
+
 # loop over the contours
 for c in cnts:
 	# approximate the contour
@@ -64,6 +69,8 @@ for c in cnts:
 			(cX, cY) = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
 			(startX, endX) = (int(cX - (w * 0.15)), int(cX + (w * 0.15)))
 			(startY, endY) = (int(cY - (h * 0.15)), int(cY + (h * 0.15)))
+			listCenterX.append(cX)
+			listCenterY.append(cY)
 			cv2.line(imgOriginal, (startX, cY), (endX, cY), (0, 0, 255), 3)
 			cv2.line(imgOriginal, (cX, startY), (cX, endY), (0, 0, 255), 3)
 
@@ -79,6 +86,12 @@ for c in cnts:
 			calc_tgt_dist = target_actual_width * 643 / aw
 # draw the status text on the frame
 cv2.putText(imgOriginal, status, (20, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5,(0, 0, 255), 2)
+cX = int((listCenterX[0] + listCenterX[1])/2)
+cY = int((listCenterY[0] + listCenterY[1])/2)
+(startX, endX) = (int(cX - 5), int(cX + 5))
+(startY, endY) = (int(cY - 5), int(cY + 5))
+cv2.line(imgOriginal, (startX, cY), (endX, cY), (0, 0, 255), 3)
+cv2.line(imgOriginal, (cX, startY), (cX, endY), (0, 0, 255), 3)
 #cv2.putText(imgOriginal, ("Ctr X = " + str(cX)), (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.5,(0, 0, 255), 1)
 #cv2.putText(imgOriginal, ("Ctr Y = " + str(cY)), (20, 70), cv2.FONT_HERSHEY_SIMPLEX, 0.5,(0, 0, 255), 1)
 #cv2.putText(imgOriginal, ("Width = " + str(aw)), (20, 90), cv2.FONT_HERSHEY_SIMPLEX, 0.5,(0, 255, 0), 1)
