@@ -5,7 +5,7 @@ import numpy as np
 status = "No Targets"
 #change the name of the image fike as needed. File needs to be in the same directory as the script
 #a few lines of code will make this into a video capture.
-imgOriginal = cv2.imread('gear_3.jpg') 
+imgOriginal = cv2.imread('highgoal_1.jpg') 
 #gray = cv2.cvtColor(imgOriginal, cv2.COLOR_BGR2GRAY)
 #cv2.imshow('gray', gray)
 #ret, graythresh = cv2.threshold(gray,85,255,cv2.THRESH_BINARY)
@@ -13,7 +13,7 @@ imgOriginal = cv2.imread('gear_3.jpg')
 imgHSV = cv2.cvtColor(imgOriginal, cv2.COLOR_BGR2HSV)
 
 #imgThresh = cv2.inRange(imgHSV, np.array([70, 80, 100]), np.array([95, 255, 255]))
-imgThresh = cv2.inRange(imgHSV, np.array([40,100,100]), np.array([90, 255, 255]))
+imgThresh = cv2.inRange(imgHSV, np.array([55,100,100]), np.array([75, 255, 255]))
 # for the dark gren  target
 imgThresh2 = imgThresh
 cv2.imshow('imgThresh2', imgThresh2)
@@ -46,10 +46,10 @@ for c in cnts:
 		 
 		# compute whether or not the width and height, solidity, and
 		# aspect ratio of the contour falls within appropriate bounds
-		keepDims = w > 5 and h >5
+		keepDims = w > 20 and h >15 
 		#the U shaped targets are not very "solid" so a small number helps prevet false positives
-		keepSolidity = solidity > 0.4 and solidity < 1
-		keepAspectRatio = aspectRatio >= .2  and aspectRatio <= 4
+		keepSolidity = solidity > 0.1 and solidity < 1
+		keepAspectRatio = aspectRatio >= 1  and aspectRatio <= 20
 		
 		# ensure that the contour passes all our tests
 		if keepDims and keepSolidity and keepAspectRatio:
@@ -77,6 +77,8 @@ for c in cnts:
 			cv2.rectangle(imgOriginal,(ax,ay),(ax+aw,ay+ah),(0,255,0),2)
 			target_actual_width = 6.77
 			calc_tgt_dist = target_actual_width * 643 / aw
+
+	
 # draw the status text on the frame
 cv2.putText(imgOriginal, status, (20, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5,(0, 0, 255), 2)
 #cv2.putText(imgOriginal, ("Ctr X = " + str(cX)), (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.5,(0, 0, 255), 1)

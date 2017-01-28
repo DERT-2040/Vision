@@ -5,7 +5,7 @@ import numpy as np
 status = "No Targets"
 #change the name of the image fike as needed. File needs to be in the same directory as the script
 #a few lines of code will make this into a video capture.
-imgOriginal = cv2.imread('highgoal_1.jpg') 
+imgOriginal = cv2.imread('gear_3.jpg') 
 #gray = cv2.cvtColor(imgOriginal, cv2.COLOR_BGR2GRAY)
 #cv2.imshow('gray', gray)
 #ret, graythresh = cv2.threshold(gray,85,255,cv2.THRESH_BINARY)
@@ -13,7 +13,7 @@ imgOriginal = cv2.imread('highgoal_1.jpg')
 imgHSV = cv2.cvtColor(imgOriginal, cv2.COLOR_BGR2HSV)
 
 #imgThresh = cv2.inRange(imgHSV, np.array([70, 80, 100]), np.array([95, 255, 255]))
-imgThresh = cv2.inRange(imgHSV, np.array([25,100,100]), np.array([90, 255, 255]))
+imgThresh = cv2.inRange(imgHSV, np.array([40,100,100]), np.array([90, 255, 255]))
 # for the dark gren  target
 imgThresh2 = imgThresh
 cv2.imshow('imgThresh2', imgThresh2)
@@ -26,6 +26,11 @@ cv2.imshow('imgThresh2', imgThresh2)
 # find contours in the edge map
 (im2, cnts, hierarchy) = cv2.findContours(imgThresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 #cv2.imshow('edged', edged)	
+
+#save center values
+listCenterX = [];
+listCenterY = [];
+
 # loop over the contours
 for c in cnts:
 	# approximate the contour
@@ -33,7 +38,7 @@ for c in cnts:
 	approx = cv2.approxPolyDP(c, 0.01 * peri, True)
  
 	# ensure that the approximated contour is "roughly" rectangular
-	if len(approx) >= 4 and len(approx) <= 20:
+	if len(approx) >= 4 and len(approx) <= 10:
 		# compute the bounding box of the approximated contour and
 	        # use the bounding box to compute the aspect ratio
 		(x, y, w, h) = cv2.boundingRect(approx)
@@ -46,10 +51,10 @@ for c in cnts:
 		 
 		# compute whether or not the width and height, solidity, and
 		# aspect ratio of the contour falls within appropriate bounds
-		keepDims = w > 25 and h >25
+		keepDims = w > 5 and h >5
 		#the U shaped targets are not very "solid" so a small number helps prevet false positives
-		keepSolidity = solidity > 0.1 and solidity < 1
-		keepAspectRatio = aspectRatio >= 1  and aspectRatio <= 20
+		keepSolidity = solidity > 0.4 and solidity < 1
+		keepAspectRatio = aspectRatio >= .2  and aspectRatio <= 4
 		
 		# ensure that the contour passes all our tests
 		if keepDims and keepSolidity and keepAspectRatio:
@@ -64,6 +69,8 @@ for c in cnts:
 			(cX, cY) = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
 			(startX, endX) = (int(cX - (w * 0.15)), int(cX + (w * 0.15)))
 			(startY, endY) = (int(cY - (h * 0.15)), int(cY + (h * 0.15)))
+			listCenterX.append(cX)
+			listCenterY.append(cY)
 			cv2.line(imgOriginal, (startX, cY), (endX, cY), (0, 0, 255), 3)
 			cv2.line(imgOriginal, (cX, startY), (cX, endY), (0, 0, 255), 3)
 
@@ -79,6 +86,12 @@ for c in cnts:
 			calc_tgt_dist = target_actual_width * 643 / aw
 # draw the status text on the frame
 cv2.putText(imgOriginal, status, (20, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5,(0, 0, 255), 2)
+cX = int((listCenterX[0] + listCenterX[1])/2)
+cY = int((listCenterY[0] + listCenterY[1])/2)
+(startX, endX) = (int(cX - 5), int(cX + 5))
+(startY, endY) = (int(cY - 5), int(cY + 5))
+cv2.line(imgOriginal, (startX, cY), (endX, cY), (0, 0, 255), 3)
+cv2.line(imgOriginal, (cX, startY), (cX, endY), (0, 0, 255), 3)
 #cv2.putText(imgOriginal, ("Ctr X = " + str(cX)), (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.5,(0, 0, 255), 1)
 #cv2.putText(imgOriginal, ("Ctr Y = " + str(cY)), (20, 70), cv2.FONT_HERSHEY_SIMPLEX, 0.5,(0, 0, 255), 1)
 #cv2.putText(imgOriginal, ("Width = " + str(aw)), (20, 90), cv2.FONT_HERSHEY_SIMPLEX, 0.5,(0, 255, 0), 1)
