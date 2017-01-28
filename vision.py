@@ -4,6 +4,45 @@ import time
 import cv2
 import numpy as np
 import math
+	
+class Target:
+	def __init__(self):
+		self.lower_HSV = np.array([])
+		self.upper_HSV = np.array([])
+		self.vertices_lower = 0
+		self.vertices_upper = 0
+		self.width = 0
+		self.height = 0
+		self.solidity_lower = 0
+		self.solidity_upper = 0
+		self.aspect_ratio_lower = 0
+		self.aspect_ratio_upper = 0
+		return
+		
+	def add_HSV_values(self, lower, upper):
+		self.lower_HSV = lower
+		self.upper_HSV = upper
+		return
+		
+	def add_vertices(self, lower, upper):
+		self.vertices_lower = lower
+		self.vertices_upper = upper
+		return
+		
+	def add_width_and_height(self, w, h):
+		self.width = w
+		self.height = h
+		return
+		
+	def add_solidity(self, lower, upper):
+		self.solidity_lower = lower
+		self.solidity_upper = upper
+		return
+		
+	def add_aspect_ratio(self, lower, upper):
+		self.aspect_ratio_lower = lower
+		self.aspect_ratio_upper = upper
+		return
 
 def camera_initialise(framerate):
 	camera = PiCamera()
@@ -75,42 +114,5 @@ def bounding_rectangle_blue(imgOriginal,c):
 	ax,ay,aw,ah = cv2.boundingRect(c)
 	cv2.rectangle(imgOriginal,(ax,ay),(ax+aw,ay+ah),(0,255,0),2)
 	return ax,ay,aw,ah,imgOriginal
+
 	
-class Target:
-	def __init__(self):
-		self.lower_HSV = np.array([])
-		self.upper_HSV = np.array([])
-		self.vertices_lower = 0
-		self.vertices_upper = 0
-		self.width = 0
-		self.height = 0
-		self.solidity_lower = 0
-		self.solidity_upper = 0
-		self.aspect_ratio_lower = 0
-		self.aspect_ratio_upper = 0
-		return
-		
-	def add_HSV_values(self, lower, upper):
-		self.lower_HSV = lower
-		self.upper_HSV = upper
-		return
-		
-	def add_vertices(self, lower, upper):
-		self.vertices_lower = lower
-		self.vertices_upper = upper
-		return
-		
-	def add_width_and_height(self, w, h):
-		self.width = w
-		self.height = h
-		return
-		
-	def add_solidity(self, lower, upper):
-		self.solidity_lower = lower
-		self.solidity_upper = upper
-		return
-		
-	def add_aspect_ratio(self, lower, upper):
-		self.aspect_ratio_lower = lower
-		self.aspect_ratio_upper = upper
-		return
