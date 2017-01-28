@@ -47,12 +47,17 @@ class Target:
 
 
 
-def camera_initialise(framerate,resolutionX, resolutionY):
+def camera_initialise(framerate,resolutionX, resolutionY,shutterspeed,iso):
 	camera = PiCamera()
 	camera.resolution = (resolutionX, resolutionY)
 	camera.framerate = framerate
 	camera.hflip = True
 	rawCapture = PiRGBArray(camera, size=(resolutionX, resolutionY))
+	time.sleep(1)
+	camera.exposure_mode = 'off'
+	camera.shutter_speed = shutterspeed
+	camera.iso = iso
+
 	return (camera, rawCapture)
 
 def draw_box(imgOriginal):
@@ -140,9 +145,8 @@ def calc_percent_error_X(resolutionX, listCenterX):
 
 def disp_percent_error_X(imgOriginal, errorX,listCenterX,vp):
 	
-        cv2.putText(imgOriginal, ("% Error = " + str(errorX)), (20, 110), cv2.FONT_HERSHEY_SIMPLEX, 0.5,(0, 255, 0), 1)
+	cv2.putText(imgOriginal, ("% Error = " + str(errorX)), (20, 110), cv2.FONT_HERSHEY_SIMPLEX, 0.5,(0, 255, 0), 1)
 	vp.putNumber("% Error = ", errorX)
-	
 	return imgOriginal
 		
 	
