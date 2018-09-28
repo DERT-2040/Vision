@@ -1,0 +1,85 @@
+// Position of BOSCH AHC-2 12V  6004.RA3.194-06 174.9:1 gear w/ encoder 1 tick per motor revolution on roboRIO analog 5 volt bus
+// FRC Team 4237 Lakeshore High School
+// Sample program merely rotates 1 revolution then reverses for 1 revolution and does so forever.
+
+#include "WPILib.h"
+#include "CANTalon.h"
+
+class Robot: public SampleRobot
+{
+public:
+	Robot();
+	void OperatorControl();
+	float CheckDirectionChange(float);
+	int GetPosition();
+private:
+	CANTalon* mCANTalon; // motor
+	AnalogTrigger mAnalogTrigger; // create an encoder pulse trigger
+	Counter* mCounter; // count the encoder pulse triggers in current direction
+	float mSpeedPrevious; // to remember previous direction
+	int mPosition; // position accumulator to remember previous position before last direction change
+};
+
+Robot::Robot() : mAnalogTrigger(0)
+{
+	mCANTalon = new CANTalon(0);
+	mAnalogTrigger.SetLimitsVoltage(3.2, 3.8); // values higher than the highest minimum (pulse floor), lower than the lowest maximum (pulse ceiling)
+//	for 5V supply and 230 ohm resistor the low voltage is 2.88, average is 3.51, and peak is 4.1. Verify with final install.
+	mCounter = new Counter(&mAnalogTrigger);
+	mSpeedPrevious = 0.;
+	mPosition = 0;
+}
+
+float Robot::CheckDirectionChange(float NewSpeed)
+{
+	// update position accumulator if changing direction
+	// encoder doesn't know the direction so we have to remember the direction for it
+	if ((mSpeedPrevious < 0 && NewSpeed >= 0) || (mSpeedPrevious >= 0 && NewSpeed < 0))
+	{
+		mPosition = GetPosition(); // changing directions so save what we have
+		mCounter->Reset(); // and start counting in the new direction
+		mSpeedPrevious = NewSpeed; // return input speed for ease of use (may include it in the Set() argument => Set(CheckDirectionChange(speed)))
+	}
+		return NewSpeed;
+}
+
+int Robot::GetPosition()
+{
+	// position from previous direction change plus what's been accumulated so far in this direction
+	if (mSpeedPrevious >= 0)
+		return mPosition + mCounter->Get(); // been going forward so add counter
+
+	return mPosition - mCounter->Get(); // been going backward so subtract counter
+}
+
+void Robot::OperatorControl()
+{
+	bool blockForward, blockReverse; // soft limit switches for this example
+	int mPos=0;
+	float speed = 1.0; // initial speed for this example
+	mCounter->Reset();
+
+// example back and forth nearly 1 revolution (174.9)
+
+	while(IsEnabled() && IsOperatorControl())
+	{
+		mPos = GetPosition();
+		printf("Position %d, Speed %f\n", mPos, speed);
+
+		if (mPos >= 175) blockForward = true; // example check for at limit switch
+		else blockForward = false;
+
+		if (mPos <= 0) blockReverse = true; // example check for at limit switch
+		else blockReverse = false;
+
+		if (blockForward) speed = -1.; // example if at a limit switch go back the other way
+		if (blockReverse) speed = +1.;
+
+		// call CheckDirectionChange with same speed as Set() with (or before or after) every motor Set() to update position if reversing direction
+		mCANTalon->Set(CheckDirectionChange(speed)); // refresh or change speed, update position if changing direction
+
+		Wait(0.01); // ticks won't be lost but wait less to see them all here and respond faster
+	}
+}
+
+START_ROBOT_CLASS(Robot)
