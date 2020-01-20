@@ -130,7 +130,6 @@ class :
             if (ratio < min_ratio or ratio > max_ratio):
                 continue
             output.append(contour)
+            d = int((3.25 * 160)/(2 * w * 61))
         return output
-
-
-
+        print(d, x, y)
