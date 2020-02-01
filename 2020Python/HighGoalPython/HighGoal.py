@@ -352,4 +352,5 @@ if __name__ == "__main__":
             sendpacket = str(filter_contours_output[0]) + "," + str(filter_contours_output[1]) + "," + str(filter_contours_output[2]) + "," + str(filter_contours_output[3])
         else:
             sendpacket = "E"
-        clientSock.sendto(sendpacket, (UDP_IP, UDP_PORT))
+        
+        clientSock.sendto(str.encode(sendpacket), (UDP_IP, UDP_PORT))
