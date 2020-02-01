@@ -16,6 +16,12 @@ from enum import Enum
 from cscore import CameraServer, VideoSource, UsbCamera, MjpegServer, CvSink, VideoSink
 from networktables import NetworkTablesInstance
 import ntcore
+import socket
+
+UDP_IP = '10.20.40.2'
+
+UDP_PORT = 5805
+clientSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 #   JSON format:
 #   {
@@ -323,7 +329,7 @@ if __name__ == "__main__":
         startSwitchedCamera(config)
 
     img = numpy.zeros(shape=(480, 640, 3), dtype=numpy.uint8)
-    
+    sendpacket = " "
     # loop forever
     while True:
        
@@ -341,3 +347,7 @@ if __name__ == "__main__":
         
         if filter_contours_output is not None:
             print(filter_contours_output[0], filter_contours_output[1], filter_contours_output[2], filter_contours_output[3])
+            sendpacket = filter_contours_output[0] + "," + filter_contours_output[1] + "," + filter_contours_output[2] + "," + filter_contours_output[3]
+        else
+            sendpacket = "E"
+        clientSock.sendto(str(sendpacket), (UDP_IP, UDP_PORT))
