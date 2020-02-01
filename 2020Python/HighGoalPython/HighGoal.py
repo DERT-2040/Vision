@@ -18,10 +18,7 @@ from networktables import NetworkTablesInstance
 import ntcore
 import socket
 
-UDP_IP = '10.20.40.2'
 
-UDP_PORT = 5805
-clientSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 #   JSON format:
 #   {
@@ -67,6 +64,11 @@ clientSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 configFile = "/boot/frc.json"
 
 class CameraConfig: pass
+
+UDP_IP = '10.20.40.2'
+
+UDP_PORT = 5805
+clientSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 team = 2040
 server = False
