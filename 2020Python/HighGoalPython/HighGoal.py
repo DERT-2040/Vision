@@ -350,6 +350,6 @@ if __name__ == "__main__":
         if filter_contours_output is not None:
             print(filter_contours_output[0], filter_contours_output[1], filter_contours_output[2], filter_contours_output[3])
             sendpacket = filter_contours_output[0] + "," + filter_contours_output[1] + "," + filter_contours_output[2] + "," + filter_contours_output[3]
-        else
+        else:
             sendpacket = "E"
         clientSock.sendto(str(sendpacket), (UDP_IP, UDP_PORT))
