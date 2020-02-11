@@ -16,9 +16,6 @@ from enum import Enum
 from cscore import CameraServer, VideoSource, UsbCamera, MjpegServer, CvSink, VideoSink
 from networktables import NetworkTablesInstance
 import ntcore
-import socket
-
-
 
 #   JSON format:
 #   {
@@ -64,11 +61,6 @@ import socket
 configFile = "/boot/frc.json"
 
 class CameraConfig: pass
-
-UDP_IP = '10.20.40.2'
-
-UDP_PORT = 5805
-clientSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 team = 2040
 server = False
@@ -272,7 +264,6 @@ def __filter_contours(input_contours, min_area, min_perimeter, min_width, max_wi
     h = float(0)
     r = float(0)
     d = float(0)
-    ar = float(0) 
     for contour in input_contours:
         #x,y,w,h = cv2.boundingRect(contour)
         (x,y),(w,h),r= cv2.minAreaRect(contour)
@@ -294,13 +285,15 @@ def __filter_contours(input_contours, min_area, min_perimeter, min_width, max_wi
         ratio = (float)(w) / h
         if (ratio < min_ratio or ratio > max_ratio):
             continue
-        ar = float(max(w, h) / min(w, h))
-        d = float(19.5/math.tan(0.01745 *(((max(w, h)/ 640)*53)/2)))
+        aspp = float(max(w, h) / min(w, h))
+        #d = float(19.5/math.tan(0.0174533*(((max(w, h)/640)*53)/2)))
+        d = float(575 + (-9.35 * (min(w, h))) + (0.0467 * (min(w, h)) * (min(w, h))))
         output.append(contour)
-        position.append(d)
-        position.append(x)
-        position.append(y)
-        position.append(max(w, h))
+        position.append('%.3F'%(d))
+        position.append('%.3F'%(x))
+        position.append('%.3F'%(y))
+        position.append('%.3F'%(max(w, h)))
+        position.append('%.3F'%(min(w, h)))
         position.append(output)
         return position
     
@@ -331,7 +324,7 @@ if __name__ == "__main__":
         startSwitchedCamera(config)
 
     img = numpy.zeros(shape=(480, 640, 3), dtype=numpy.uint8)
-    sendpacket = " "
+    
     # loop forever
     while True:
        
@@ -348,9 +341,4 @@ if __name__ == "__main__":
         ( filter_contours_output) =  __filter_contours( __filter_contours_contours,  __filter_contours_min_area,  __filter_contours_min_perimeter,  __filter_contours_min_width,  __filter_contours_max_width,  __filter_contours_min_height,  __filter_contours_max_height,  __filter_contours_solidity,  __filter_contours_max_vertices,  __filter_contours_min_vertices,  __filter_contours_min_ratio,  __filter_contours_max_ratio)
         
         if filter_contours_output is not None:
-            print(filter_contours_output[0], filter_contours_output[1], filter_contours_output[2], filter_contours_output[3])
-            sendpacket = str(filter_contours_output[0]) + "," + str(filter_contours_output[1]) + "," + str(filter_contours_output[2]) + "," + str(filter_contours_output[3])
-        else:
-            sendpacket = "E"
-        
-        clientSock.sendto(str.encode(sendpacket), (UDP_IP, UDP_PORT))
+            print(filter_contours_output[0], filter_contours_output[1], filter_contours_output[2], filter_contours_output[3], filter_contours_output[4])
