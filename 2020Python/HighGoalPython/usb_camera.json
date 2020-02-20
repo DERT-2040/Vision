@@ -1,0 +1,9 @@
+{
+    "team": 2040,
+    "cameras": [
+        {
+            "name":"usb_cam",
+            "path":"/dev/video2"
+        }
+    ]
+}
