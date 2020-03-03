@@ -300,21 +300,28 @@ if __name__ == "__main__":
     img = numpy.zeros(shape=(480, 640, 3), dtype=numpy.uint8)
     
     previous_timestamp = sink.getSource().getLastFrameTime()
+    cv2.namedWindow("hsv_input",cv2.WINDOW_NORMAL)
+    cv2.namedWindow("hsv_output",cv2.WINDOW_NORMAL)
+    
     # loop forever
     while True:
        
         # Step HSV_Threshold0:
-        __hsv_threshold_input = sink.grabFrame(img)
-        timestamp = sink.getSource().getLastFrameTime()
+        timestamp, img = sink.grabFrame(img)
+        cv2.imshow("hsv_input",img)
+        cv2.waitKey(30)
+        #timestamp = sink.getSource().getLastFrameTime()
         sys.stdout.write("Last frame time: " + str(timestamp - previous_timestamp) + "          \r")
         previous_timestamp = timestamp
         
         (hsv_threshold_output) =  __hsv_threshold( img,  __hsv_threshold_hue,  __hsv_threshold_saturation,  __hsv_threshold_value)
-
+        cv2.imshow("hsv_output",hsv_threshold_output)
+        cv2.waitKey(30)
+        
         # Step Find_Contours0:
         __find_contours_input =  hsv_threshold_output
         ( find_contours_output) =  __find_contours( __find_contours_input,  __find_contours_external_only)
- 
+       
         # Step Filter_Contours0:
         __filter_contours_contours =  find_contours_output
         ( filter_contours_output) =  __filter_contours( __filter_contours_contours,  __filter_contours_min_area,  __filter_contours_min_perimeter,  __filter_contours_min_width,  __filter_contours_max_width,  __filter_contours_min_height,  __filter_contours_max_height,  __filter_contours_solidity,  __filter_contours_max_vertices,  __filter_contours_min_vertices,  __filter_contours_min_ratio,  __filter_contours_max_ratio)
